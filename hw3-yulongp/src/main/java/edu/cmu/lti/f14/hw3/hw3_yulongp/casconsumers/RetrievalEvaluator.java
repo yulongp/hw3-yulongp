@@ -3,11 +3,14 @@ package edu.cmu.lti.f14.hw3.hw3_yulongp.casconsumers;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.CASException;
@@ -44,7 +47,7 @@ public class RetrievalEvaluator extends CasConsumer_ImplBase {
 
   /** Name of the outputFile **/
   public String outputFile;
-
+  
   public void initialize() throws ResourceInitializationException {
 
     qIdList = new ArrayList<Integer>();
@@ -82,6 +85,7 @@ public class RetrievalEvaluator extends CasConsumer_ImplBase {
 
       Map<String, Integer> tokenMap = new HashMap<String, Integer>();
       for (Token t : tokenList) {
+        //if (!stopwords.contains(t.getText()))
         tokenMap.put(t.getText(), t.getFrequency());
       }
 
@@ -123,17 +127,17 @@ public class RetrievalEvaluator extends CasConsumer_ImplBase {
       HashMap<String, Integer> query = tokenFreq.get(index);
       int totalNum = numOfSent.get(i);
       index += 1;
-      int rank = 1;
-      double sim = 0.0;
       similarity.add(0.0);
+      List<Double> localSim = new ArrayList<Double>();
       for (int j = 0; j < totalNum; j++) {
         double d = computeCosineSimilarity(query, tokenFreq.get(index + j));
         similarity.add(d);
-        if (sim < d) {
-          sim = d;
-          rank = j + 1;
-        }
+        System.out.println(d);
+        localSim.add(d);
       }
+      double sim = similarity.get(index);
+      Collections.sort(localSim, Collections.reverseOrder());
+      int rank = localSim.indexOf(sim) + 1;
       rankings.add(rank);
       index += totalNum;
     }
