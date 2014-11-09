@@ -37,6 +37,7 @@ import org.apache.uima.util.XMLInputSource;
 
 public class VectorSpaceRetrieval {
 	
+  // test
 	public static void main(String [] args) 
 			throws Exception {
 			
